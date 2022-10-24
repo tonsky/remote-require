@@ -53,6 +53,7 @@ That’s it! Now you can use it freely:
 ```
 ## Highlights
 
+- Works directly from the REPL, no restart required
 - Caches fetched pages locally (in `~/.clj-remote-require`), so will work offline after initial fetch
 - Can import functions, variables and macros
 - Only imports what you explicitly asked for, stripping away everything else
