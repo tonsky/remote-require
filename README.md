@@ -2,13 +2,20 @@
 
 Require any Clojure snippet on-the-fly from anywhere in the Internet!
 
-## Description
+## Rationale
 
 For example, James Reeves wrote a library of useful utility functions, [medley](https://github.com/weavejester/medley). But you don’t need everything from it, you need just `assoc-some`. It would be a waste to include a whole library just to use a single function!
 
 Meet Remote Require!
 
-0. Add `remote-require` dependency to your project (just once).
+## Usage
+
+0. Add `remote-require` dependency to your project (just once):
+
+```clojure
+io.github.tonsky/remote-require {:git/sha "c9027682287f48cd89450839b18e6c69758fc343"}
+```
+
 1. Go to the file you are interested in, e.g. [src/medley/core.cljc](https://github.com/weavejester/medley/blob/master/src/medley/core.cljc)
 2. Find a function that you need, e.g. `assoc-some`
 3. Include it!
@@ -28,15 +35,6 @@ That’s it! Now you can use it freely:
   :b nil
   :c 3) ; => {:a 1, :c 3}
 ```
-
-What happens under the hood is:
-
-- URL is fetched
-- Resulting page is cached locally for future repeated imports
-- Clojure part of HTML is parsed
-- `(defn <your-symbol> ...)` is found
-- Macro outputs `defn` content into current namespace
-- If something goes wrong, exception is thrown
 
 ## Examples
 
@@ -67,6 +65,17 @@ What happens under the hood is:
 - Twitter
 - Anything else that serves “clean enough” HTML page
 
+## How does it work?
+
+What happens under the hood is:
+
+- URL is fetched
+- Resulting page is cached locally for future repeated imports
+- Clojure part of HTML is parsed
+- `(defn <your-symbol> ...)` is found
+- Macro outputs `defn` content into current namespace
+- If something goes wrong, exception is thrown
+
 ## Best practices
 
 - Try to refernce immutable sources like Github + SHA or Twitter
@@ -84,4 +93,3 @@ What happens under the hood is:
 ```
 
 - Can’t import functions with the same name from different sources (one will override another)
-
