@@ -5,6 +5,7 @@
     [clojure.tools.reader :as reader]
     [clojure.tools.reader.reader-types :as reader-types])
   (:import
+    [java.io File]
     [java.net URI]
     [java.util.regex Pattern]))
 
@@ -16,7 +17,11 @@
 
     #"https://(?:mobile\.)?twitter\.com/@?([^/]+)/status/(\d+)/?"
     :>> (fn [[_ user id]]
-          (format "https://nitter.net/%s/status/%s/embed" user id))
+          (format "https://nitter.privacydev.net/%s/status/%s" user id))
+    
+    #"https://(.*mastodon.*)/([^/]+)/(\d+)/?"
+    :>> (fn [[_ domain user id]]
+          (format "https://%s/%s/%s/embed" domain user id))
     
     url))
 
@@ -25,7 +30,13 @@
         file (io/file (str (System/getenv "HOME") "/.clj-remote-require/" (.getHost uri) (.getPath uri)))]
     (if (.exists file)
       (slurp file)
-      (let [content (slurp url)]
+      (let [content (slurp url)
+            content (if-some [i (str/index-of content "<body>")]
+                      (subs content (+ i 6))
+                      content)
+            content (if-some [i (str/index-of content "</body>")]
+                      (subs content 0 i)
+                      content)]
         (.mkdirs (.getParentFile file))
         (spit file content)
         content))))
@@ -79,5 +90,4 @@
   (doseq [f (->> (io/file (str (System/getenv "HOME") "/.clj-remote-require"))
               (file-seq)
               (reverse))]
-    (.delete f)))
-              
+    (.delete ^File f)))
